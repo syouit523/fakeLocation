@@ -1,5 +1,7 @@
 require 'fileutils'
 
+WORKDIR = File.dirname(__FILE__)
+
 class String
   def red
     "\e[32m#{self}\e[0m"
@@ -28,6 +30,9 @@ task :init do
   Rake::Task["setVariables"].execute()
   Rake::Task["make"].execute()
   Rake::Task["CorrespondingMojave"].execute()
+  success 'Installed libimobiledevice'
+  info 'Install LocationSimulator'
+  Rake::Task["LocationSimulator"].execute()
 end
 
 desc 'brew install'
@@ -79,13 +84,26 @@ task :CorrespondingMojave do
   sh 'brew link usbmuxd'
 end
 
+desc 'install LocationSimulator'
+task :LocationSimulator do
+  sh 'git clone https://github.com/watanabetoshinori/LocationSimulator.git'
+  cd 'LocationSimulator/' do
+    sh 'open LocationSimulator.xcodeproj'
+  end
+end
+
 
 
 desc 'uninstall'
 task :uninstall do
   info 'start uninstall'
+  if FileTest.exists?("./idevicelocation/") then
+    sh 'rm -rf idevicelocation'
+  end
+  if FileTest.exists?("./LocationSimulator/") then
+    sh 'rm -rf LocationSimulator'
+  end
   sh 'brew uninstall --ignore-dependencies libimobiledevice'
-  sh 'rm -rf idevicelocation'
 end
 
 def verbose(s)
