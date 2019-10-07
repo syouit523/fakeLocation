@@ -17,3 +17,6 @@ rake init
 You should check
 - [idevicelocation](https://github.com/JonGabilondoAngulo/idevicelocation)
 - [LocationSimulator](https://github.com/watanabetoshinori/LocationSimulator)
+
+LocationSimulator Usage
+- https://blue-developer.hatenablog.com/entry/LocationSimulator
