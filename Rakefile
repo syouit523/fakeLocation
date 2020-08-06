@@ -79,14 +79,14 @@ task :setVariables do
   sh 'export LD_LIBRARY_PATH=/usr/local/opt/openssl/lib:$LD_LIBRARY_PATH'
   sh 'export CPATH=/usr/local/opt/openssl/include:$CPATH'
   sh 'export LIBRARY_PATH=/usr/local/opt/openssl/lib:$LIBRARY_PATH'
-  sh 'export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig'
+  sh 'export PKG_CONFIG_PATH=/usr/local/opt/openssl/lib/pkgconfig'
 end
 
 desc 'libimobiledevice make'
 task :make do
   info 'start libimobiledevice make'
   cd 'idevicelocation/' do
-    sh 'PKG_CONFIG_PATH=/usr/local/lib/pkgconfig ./autogen.sh --disable-openssl'
+    sh './autogen.sh'
     sh 'make'
     sh 'cp ./src/idevicelocation /usr/local/bin/idevicelocation'
   end
