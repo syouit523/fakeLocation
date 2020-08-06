@@ -46,14 +46,30 @@ end
 desc 'install libimobiledevice'
 task :libimobiledevice do
   info 'start install libimobiledevice'
-  sh 'brew install --HEAD libimobiledevice'
-  sh 'brew install libtool automake libzip'
+
+  sh 'brew install libimobiledevice'
+
+  brewInstallPackages = ["libtool", "automake", "libzip"]
+  for package in brewInstallPackages do
+    if isBrewInstalled(package) == false then
+      sh 'brew install #{package}'
+    end
+  end
+
+end
+
+def isBrewInstalled(package)
+  sh "brew list | grep #{package}" do |ok, status|
+    return ok
+  end
 end
 
 desc 'git clone idevicelocation'
 task :cloneIdevicelocation do
   info 'start git clone idevicelocation'
-  sh 'git clone https://github.com/JonGabilondoAngulo/idevicelocation.git'
+  if File.directory?('./idevicelocation') == false then
+    sh 'git clone https://github.com/JonGabilondoAngulo/idevicelocation.git'
+  end
 end
 
 desc 'set variables'
@@ -63,14 +79,15 @@ task :setVariables do
   sh 'export LD_LIBRARY_PATH=/usr/local/opt/openssl/lib:$LD_LIBRARY_PATH'
   sh 'export CPATH=/usr/local/opt/openssl/include:$CPATH'
   sh 'export LIBRARY_PATH=/usr/local/opt/openssl/lib:$LIBRARY_PATH'
-  sh 'export PKG_CONFIG_PATH=/usr/local/opt/openssl/lib/pkgconfig'
+  # sh 'export PKG_CONFIG_PATH=/usr/local/opt/openssl/lib/pkgconfig
+  sh 'export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig'
 end
 
 desc 'libimobiledevice make'
 task :make do
   info 'start libimobiledevice make'
   cd 'idevicelocation/' do
-    sh './autogen.sh'
+    sh 'PKG_CONFIG_PATH=/usr/local/lib/pkgconfig ./autogen.sh --disable-openssl'
     sh 'make'
     sh 'cp ./src/idevicelocation /usr/local/bin/idevicelocation'
   end

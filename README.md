@@ -7,6 +7,17 @@ You can easy location information impersonation.
 - Xcode 9.0+
 - Swift 4.0+
 
+
+# Set setVariables
+Please do this before installing
+```
+$ export PATH=/usr/local/opt/openssl/bin:$PATH
+$ export LD_LIBRARY_PATH=/usr/local/opt/openssl/lib:$LD_LIBRARY_PATH
+$ export CPATH=/usr/local/opt/openssl/include:$CPATH
+$ export LIBRARY_PATH=/usr/local/opt/openssl/lib:$LIBRARY_PATH
+$ export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
+```
+
 # Installation
 To commandline run:
 ```
