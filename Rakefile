@@ -29,9 +29,6 @@ task :init do
   Rake::Task["cloneIdevicelocation"].execute()
   Rake::Task["setVariables"].execute()
   Rake::Task["make"].execute()
-  success 'Installed libimobiledevice'
-  info 'Install LocationSimulator'
-  Rake::Task["LocationSimulator"].execute()
   info 'Complete all process!'
 end
 
@@ -94,18 +91,6 @@ task :make do
     sh 'cp ./src/idevicelocation /usr/local/bin/idevicelocation'
   end
 end
-
-desc 'install LocationSimulator'
-task :LocationSimulator do
-  if File.directory?('./LocationSimulator') == false then
-    sh 'git clone https://github.com/watanabetoshinori/LocationSimulator.git'
-  end
-  cd 'LocationSimulator/' do
-    sh 'open LocationSimulator.xcodeproj'
-  end
-end
-
-
 
 desc 'uninstall'
 task :uninstall do
