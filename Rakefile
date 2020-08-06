@@ -29,10 +29,7 @@ task :init do
   Rake::Task["cloneIdevicelocation"].execute()
   Rake::Task["setVariables"].execute()
   Rake::Task["make"].execute()
-  Rake::Task["CorrespondingMojave"].execute()
-  success 'Installed libimobiledevice'
-  info 'Install LocationSimulator'
-  Rake::Task["LocationSimulator"].execute()
+  info 'Complete all process!'
 end
 
 desc 'brew install'
@@ -46,14 +43,33 @@ end
 desc 'install libimobiledevice'
 task :libimobiledevice do
   info 'start install libimobiledevice'
-  sh 'brew install --HEAD libimobiledevice'
-  sh 'brew install libtool automake libzip'
+
+  sh 'brew install libimobiledevice'
+
+  brewInstallPackages = ["libtool", "automake", "libzip"]
+  for package in brewInstallPackages do
+    if isBrewInstalled(package) == false then
+      sh 'brew install #{package}'
+    end
+  end
+  if File.exist?('/usr/local/lib/pkgconfig/libplist.pc') == false then
+    # if installed libplist-2.0 create to libplist.pc for ideviceLocation
+    sh 'cp /usr/local/lib/pkgconfig/libplist-2.0.pc /usr/local/lib/pkgconfig/libplist.pc'
+  end
+end
+
+def isBrewInstalled(package)
+  sh "brew list | grep #{package}" do |ok, status|
+    return ok
+  end
 end
 
 desc 'git clone idevicelocation'
 task :cloneIdevicelocation do
   info 'start git clone idevicelocation'
-  sh 'git clone https://github.com/JonGabilondoAngulo/idevicelocation.git'
+  if File.directory?('./idevicelocation') == false then
+    sh 'git clone https://github.com/JonGabilondoAngulo/idevicelocation.git'
+  end
 end
 
 desc 'set variables'
@@ -75,24 +91,6 @@ task :make do
     sh 'cp ./src/idevicelocation /usr/local/bin/idevicelocation'
   end
 end
-
-desc 'Corresponding Mojave'
-task :CorrespondingMojave do
-  info 'start Corresponding Mojave'
-  sh 'sudo rm -rf /var/db/lockdown/*'
-  sh 'brew unlink usbmuxd'
-  sh 'brew link usbmuxd'
-end
-
-desc 'install LocationSimulator'
-task :LocationSimulator do
-  sh 'git clone https://github.com/watanabetoshinori/LocationSimulator.git'
-  cd 'LocationSimulator/' do
-    sh 'open LocationSimulator.xcodeproj'
-  end
-end
-
-
 
 desc 'uninstall'
 task :uninstall do
