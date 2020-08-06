@@ -29,10 +29,10 @@ task :init do
   Rake::Task["cloneIdevicelocation"].execute()
   Rake::Task["setVariables"].execute()
   Rake::Task["make"].execute()
-  Rake::Task["CorrespondingMojave"].execute()
   success 'Installed libimobiledevice'
   info 'Install LocationSimulator'
   Rake::Task["LocationSimulator"].execute()
+  info 'Complete all process!'
 end
 
 desc 'brew install'
@@ -55,7 +55,10 @@ task :libimobiledevice do
       sh 'brew install #{package}'
     end
   end
-
+  if File.exist?('/usr/local/lib/pkgconfig/libplist.pc') == false then
+    # if installed libplist-2.0 create to libplist.pc for ideviceLocation
+    sh 'cp /usr/local/lib/pkgconfig/libplist-2.0.pc /usr/local/lib/pkgconfig/libplist.pc'
+  end
 end
 
 def isBrewInstalled(package)
@@ -79,7 +82,6 @@ task :setVariables do
   sh 'export LD_LIBRARY_PATH=/usr/local/opt/openssl/lib:$LD_LIBRARY_PATH'
   sh 'export CPATH=/usr/local/opt/openssl/include:$CPATH'
   sh 'export LIBRARY_PATH=/usr/local/opt/openssl/lib:$LIBRARY_PATH'
-  # sh 'export PKG_CONFIG_PATH=/usr/local/opt/openssl/lib/pkgconfig
   sh 'export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig'
 end
 
@@ -93,17 +95,11 @@ task :make do
   end
 end
 
-desc 'Corresponding Mojave'
-task :CorrespondingMojave do
-  info 'start Corresponding Mojave'
-  sh 'sudo rm -rf /var/db/lockdown/*'
-  sh 'brew unlink usbmuxd'
-  sh 'brew link usbmuxd'
-end
-
 desc 'install LocationSimulator'
 task :LocationSimulator do
-  sh 'git clone https://github.com/watanabetoshinori/LocationSimulator.git'
+  if File.directory?('./LocationSimulator') == false then
+    sh 'git clone https://github.com/watanabetoshinori/LocationSimulator.git'
+  end
   cd 'LocationSimulator/' do
     sh 'open LocationSimulator.xcodeproj'
   end
